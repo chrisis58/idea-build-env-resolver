@@ -24,7 +24,15 @@ When Claude Code detects an IDEA project, it:
 
 ## Install
 
-Copy the skill into your project:
+### One-liner (recommended)
+
+```powershell
+irm https://raw.githubusercontent.com/chrisis58/idea-build-env/main/install.ps1 | iex
+```
+
+Choose `L` for the current project (default, just press Enter) or `G` to install globally for all projects.
+
+### Result
 
 ```
 your-project/
@@ -34,12 +42,6 @@ your-project/
             ├── SKILL.md
             └── scripts/
                 └── resolve-env.ps1
-```
-
-Or clone directly into `.claude/skills/`:
-
-```bash
-git clone https://github.com/chrisis58/idea-build-env.git .claude/skills/idea-build-env
 ```
 
 That's it — Claude Code auto-discovers the skill on the next session.

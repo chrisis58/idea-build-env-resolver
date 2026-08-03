@@ -24,7 +24,15 @@ IDEA 将项目的 JDK 和 Maven 配置存储在自己的文件中（而非 `PATH
 
 ## 安装
 
-将技能目录复制到项目中：
+### 一行命令（推荐）
+
+```powershell
+irm https://raw.githubusercontent.com/chrisis58/idea-build-env/main/install.ps1 | iex
+```
+
+选择 `L` 安装到当前项目（默认，直接回车），或 `G` 安装到全局（所有项目生效）。
+
+### 结果
 
 ```
 your-project/
@@ -35,14 +43,6 @@ your-project/
             └── scripts/
                 └── resolve-env.ps1
 ```
-
-或直接 clone 到 `.claude/skills/`：
-
-```bash
-git clone https://github.com/chrisis58/idea-build-env.git .claude/skills/idea-build-env
-```
-
-即可——Claude Code 会在下次会话自动发现该技能。
 
 ## 使用方式
 

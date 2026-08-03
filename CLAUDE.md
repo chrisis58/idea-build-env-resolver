@@ -10,12 +10,24 @@ This repo contains a Claude Code skill: **idea-build-env** — resolves JDK and 
 
 ```
 skills/idea-build-env/
-├── SKILL.md          # Skill definition
+├── SKILL.md          # Skill definition (entry point, auto-discovered)
 └── scripts/
     └── resolve-env.ps1  # PowerShell 5.1+, reads IDEA XML config, outputs KEY=value
+install.ps1           # Interactive installer (local / global)
+README.md             # English documentation
+README.zh.md          # 中文文档
 ```
 
 `SKILL.md` is the entry point. Claude Code auto-discovers skills by scanning for `SKILL.md` files. Only `SKILL.md` is auto-loaded.
+
+## Documentation
+
+This project maintains documentation in two languages:
+
+- [README.md](README.md) — English
+- [README.zh.md](README.zh.md) — 中文
+
+When making changes, **keep both files in sync**. Every change to README.md must be reflected in README.zh.md, and vice versa.
 
 ## Testing
 
@@ -41,4 +53,12 @@ The script is Windows-only (`#Requires -Version 5.1`). It uses no external depen
 
 ## Distribution
 
-This repo is intended for GitHub distribution. Users install by cloning or copying the `skills/idea-build-env/` directory into their project's `.claude/skills/`. See `SKILL.md` for the full skill instructions that are distributed with the skill.
+This repo is intended for GitHub distribution. Users install via the one-liner:
+
+```powershell
+irm https://raw.githubusercontent.com/chrisis58/idea-build-env/main/install.ps1 | iex
+```
+
+This downloads and runs `install.ps1`, which interactively prompts for local (current project) or global (`~\.claude\skills\`) install. No git clone, no nested `.git` issues.
+
+See `SKILL.md` for the full skill instructions that are distributed with the skill.
