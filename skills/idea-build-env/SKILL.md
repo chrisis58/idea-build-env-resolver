@@ -13,6 +13,9 @@ description: >
 ```
 root = explicitly provided directory   # argument of /idea-build-env <path>, or a clear IDEA project path in context
 
+if root matches "rebuild" | "force":
+    rebuild_mode = true; root = ""     # keyword → auto-locate, skip cache
+
 if root is empty:                       # auto-locate: search upward, up to three levels
     for dir in [cwd, cwd/.., cwd/../.., cwd/../../..]:
         if exists(dir/.idea/misc.xml): root = dir; break
@@ -30,6 +33,8 @@ else:                                   # auto-triggered (e.g. pre-build resolut
 > When checking for `.idea` use `.idea/misc.xml` (a file) — Glob does not match dot-prefixed directories.
 
 ### 1. Check MEMORY cache
+
+When `rebuild_mode` is set, skip the cache and go directly to Step 2.
 
 Read `memory/idea-build-env.md` (relative to the project root). Reuse it only if **all** of the following hold:
 
