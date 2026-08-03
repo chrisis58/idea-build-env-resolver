@@ -64,3 +64,10 @@ $env:JAVA_HOME='<JAVA_HOME>'; & '<MAVEN_CMD>' -s '<MAVEN_USER_SETTINGS>' "-Dmave
 ```
 
 All three (`JAVA_HOME`, `-s`, `-Dmaven.repo.local`) must be set whenever non-empty — `mvn.cmd` uses `JAVA_HOME` for its JDK and does not read IDEA's repository or settings config.
+
+---
+
+<div align=center> 
+💬 Any issues or feature requests — feel free to open an issue!<br />
+⭐ If this project has been helpful, please give it a star!<br /> <br /> 
+</div>

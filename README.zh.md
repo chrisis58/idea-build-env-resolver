@@ -62,3 +62,10 @@ $env:JAVA_HOME='<JAVA_HOME>'; & '<MAVEN_CMD>' -s '<MAVEN_USER_SETTINGS>' "-Dmave
 ```
 
 值非空时三者（`JAVA_HOME`、`-s`、`-Dmaven.repo.local`）必须同时指定——`mvn.cmd` 通过 `JAVA_HOME` 获取 JDK，不会自动读取 IDEA 的仓库和 settings 配置。
+
+---
+
+<div align=center> 
+💬任何使用中遇到的问题、希望添加的功能，都欢迎提交 issue 交流！<br />
+⭐ 如果这个项目对你有帮助，请给它一个星标！<br /> <br /> 
+</div>
