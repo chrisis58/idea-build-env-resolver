@@ -1,84 +1,87 @@
 ---
 name: idea-build-env
 description: >
-  Resolve JDK (java.exe / javac.exe and other JDK tools)
-  and Maven (mvn.cmd) absolute paths from IntelliJ IDEA project and global
-  configuration files. Use before any Maven or Java command.
+  Resolve JDK and Maven paths from IntelliJ IDEA project configuration.
+  Use before any Maven/Java build command in an IDEA project.
 
 ---
 
-从 IntelliJ IDEA 配置文件解析 JDK 和 Maven 的绝对路径。
+## Steps
 
-## 步骤
-
-### 0. 检查 IDEA 环境
+### 0. Check IDEA environment
 
 ```
-root = 用户显式提供的目录            # /idea-build-env <path> 的参数，或上下文中明确的 IDEA 项目路径
+root = explicitly provided directory   # argument of /idea-build-env <path>, or a clear IDEA project path in context
 
-if root 为空:                       # 自动定位：从最近一级向上，最多三级
+if root is empty:                       # auto-locate: search upward, up to three levels
     for dir in [cwd, cwd/.., cwd/../.., cwd/../../..]:
-        if exists(dir/.idea): root = dir; break
+        if exists(dir/.idea/misc.xml): root = dir; break
 
-if root and exists(root/.idea):
-    项目根目录 = root               # 作为步骤 2 脚本的 <项目根目录> 参数
-elif 手动调用 (/idea-build-env):
-    报错终止："未找到 .idea 目录，请确认在 IntelliJ IDEA 项目中执行此技能，或通过参数提供正确的项目根目录。"
-else:                               # 自动触发（如构建前自动解析）
-    跳过此技能，继续其他方式解析 JDK 和 Maven
+if root and exists(root/.idea/misc.xml):
+    if exists(root/build.gradle*) and not exists(root/pom.xml):
+        stop — this is a Gradle project; this skill does not apply
+    project root = root                 # used as the <project-root> argument in Step 2
+elif manual invocation (/idea-build-env):
+    error: ".idea directory not found. Ensure you are in an IntelliJ IDEA project, or provide the correct project root via argument."
+else:                                   # auto-triggered (e.g. pre-build resolution)
+    skip this skill, fall back to other ways of resolving JDK and Maven
 ```
 
-> 显式提供时直接用该目录、不向上查找；自动定位时最近一级命中即停，避免误匹配上层无关的 `.idea`。
+> When checking for `.idea` use `.idea/misc.xml` (a file) — Glob does not match dot-prefixed directories.
 
-### 1. 检查 MEMORY 缓存
+### 1. Check MEMORY cache
 
-若项目 MEMORY 中已有 `idea-build-env`，`Test-Path` 检查缓存的 `JAVA_EXE` 和 `MAVEN_CMD` 是否仍存在于磁盘：
-- 均存在 → 直接使用缓存值，跳到**输出**
-- 任一不存在 → 继续步骤2
+Read `memory/idea-build-env.md` (relative to the project root). Reuse it only if **all** of the following hold:
 
-> 信任缓存，失败时重解析。配置变更极罕见，构建失败时再重新解析并更新 MEMORY。
+1. Cached `PROJECT_ROOT` equals the `root` determined in Step 0.
+2. `Test-Path` succeeds for `JAVA_EXE` and `MAVEN_CMD`.
+3. `RESOLVED_AT` is newer than the last-write time of `.idea\misc.xml` and, if present, `.idea\workspace.xml`.
 
-### 2. 解析 JDK 与 Maven 路径（缓存失效时执行）
+### 2. Resolve JDK and Maven paths (when cache is invalid)
 
-> 两个脚本共用同一个项目根目录参数（含 `.idea` 的目录），不依赖 cwd、不读环境变量。路径用单引号包裹，反斜杠/空格安全。
+Run the script with the project root. Do not rely on cwd or environment variables. Quote paths with single quotes.
 
 ```bash
-powershell -NoProfile -ExecutionPolicy Bypass -Command "& '<skill 目录>/scripts/resolve-jdk.ps1' '<项目根目录>'; & '<skill 目录>/scripts/resolve-mvn.ps1' '<项目根目录>'"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& '<skill dir>/scripts/resolve-env.ps1' '<project root>'"
 ```
 
-> **JDK**：从 `.idea\misc.xml` 的 `ProjectRootManager` 解析 `project-jdk-name`，再到 IDEA 全局 `jdk.table.xml` 查找对应 `homePath`。  
-> **Maven**：从 `.idea\workspace.xml` 的 `MavenImportPreferences` → `generalSettings` → `MavenGeneralSettings` 子树解析 `customMavenHome`、`localRepository`、`userSettingsFile`。三者均为可选：未设 `customMavenHome` 时回退到 IDEA 内嵌 Maven。
+The script prints the output block (see **Output**) to stdout and nothing else, exiting non-zero on stderr if a required value fails. **Report exactly what the script printed; never guess or fill in a plausible-looking path.**
 
-### 3. 缓存到项目 MEMORY
+### 3. Cache to project MEMORY
 
-解析成功后，将以下字段写入 `memory/idea-build-env.md`：
+After successful resolution, write all fields from **Output** to `memory/idea-build-env.md`.
 
-- JDK_NAME, JDK_HOME, JAVA_EXE
-- MAVEN_HOME, MAVEN_CMD, MAVEN_REPO, MAVEN_USER_SETTINGS, MAVEN_SOURCE
+Add an index line to `memory/MEMORY.md`: `- [IDEA Build Env](idea-build-env.md) — JDK/Maven paths from IDEA config`
 
-在 `memory/MEMORY.md` 中添加索引行：`- [IDEA Build Env](idea-build-env.md) — JDK/Maven paths from IDEA config`
-
-## 输出
+## Output
 
 ```toml
 [output]
-JDK_NAME = "IDEA 项目配置的 JDK 名称"
-JDK_HOME = "JDK 安装根目录"
-JAVA_EXE = "java.exe 完整路径"
-MAVEN_HOME = "Maven 安装根目录"
-MAVEN_CMD = "mvn.cmd 完整路径"
-MAVEN_REPO = "Maven 本地仓库路径（可能为空）"
-MAVEN_USER_SETTINGS = "Maven User settings file 路径（可能为空）"
-MAVEN_SOURCE = "Maven 来源（自定义路径或\"IDEA 内嵌\"）"
+PROJECT_ROOT        = <absolute project path>
+RESOLVED_AT         = <ISO 8601 timestamp>
+JDK_NAME            = <JDK name from IDEA>
+JAVA_HOME           = <JDK home directory>
+JAVA_EXE            = <path to java.exe>
+MAVEN_HOME          = <Maven home; empty for wrapper>
+MAVEN_CMD           = <path to mvn.cmd or mvnw.cmd>
+MAVEN_REPO          = <local repository path; may be empty>
+MAVEN_USER_SETTINGS = <settings.xml path; may be empty>
+MAVEN_SOURCE        = custom | bundled | wrapper
 ```
 
-## 注意事项
+## Using the values
 
-- **mvn 命令**：只要 `MAVEN_USER_SETTINGS`、`MAVEN_REPO` 有值，就**必须**分别用 `-s`、`-Dmaven.repo.local` 显式指定。JDK 命令（java/javap 等）无此限制。
-- **上下文控制**：部分命令输出可能极长，必要时进行上下文控制（如主动截断、委托子agent等）。
+`mvn.cmd` takes its JDK from `JAVA_HOME` and ignores `JAVA_EXE`, and it does not read IDEA's repository or settings config — omitting these silently builds with a different JDK and resolves against a different repository than the IDE. Set all three whenever the values are non-empty:
 
-## 错误处理
+```powershell
+$env:JAVA_HOME='<JAVA_HOME>'; & '<MAVEN_CMD>' -s '<MAVEN_USER_SETTINGS>' "-Dmaven.repo.local=<MAVEN_REPO>" clean install
+```
 
-- **必要参数（JAVA_EXE / MAVEN_CMD / JDK_HOME）解析失败**：脚本报错并列出可用选项，提示用户修正配置
-- **其他非必要参数解析失败**：忽略错误，跳过该参数
-- **构建失败且缓存可能过期**：重新执行步骤2完整解析，更新 MEMORY，重试构建
+Quote the whole `-D` token, not just the value. JDK tools need no flags — call them by absolute path: `& '<JAVA_EXE>' -version`. Maven output can be very long; truncate or delegate to a sub-agent.
+
+## Error handling
+
+- Required value (`JAVA_EXE`, `MAVEN_CMD`, `JAVA_HOME`) unresolved → stop, show the error and the available options (e.g. the JDK names in `jdk.table.xml`), ask the user.
+- **Never fall back to `mvn`/`java` on PATH.** A build that succeeds with the wrong toolchain is worse than a clear failure.
+- Optional value unresolved → leave empty, omit its flag.
+- Build fails and the cache may be stale → re-run Step 2, update the cache, retry once.
