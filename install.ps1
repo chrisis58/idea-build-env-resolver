@@ -3,7 +3,7 @@
 #Requires -Version 5.1
 
 $SkillName = 'idea-build-env'
-$RepoUrl = 'https://github.com/chrisis58/idea-build-env/archive/refs/heads/main.zip'
+$RepoUrl = 'https://github.com/chrisis58/idea-build-env-resolver/archive/refs/heads/main.zip'
 
 try {
     # ---------- Choose install target ----------

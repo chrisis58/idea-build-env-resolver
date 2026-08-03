@@ -56,7 +56,7 @@ The script is Windows-only (`#Requires -Version 5.1`). It uses no external depen
 This repo is intended for GitHub distribution. Users install via the one-liner:
 
 ```powershell
-irm https://raw.githubusercontent.com/chrisis58/idea-build-env/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/chrisis58/idea-build-env-resolver/refs/heads/main/install.ps1 | iex
 ```
 
 This downloads and runs `install.ps1`, which interactively prompts for local (current project) or global (`~\.claude\skills\`) install. No git clone, no nested `.git` issues.

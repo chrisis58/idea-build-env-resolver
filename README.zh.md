@@ -27,7 +27,7 @@ IDEA 将项目的 JDK 和 Maven 配置存储在自己的文件中（而非 `PATH
 ### 一行命令（推荐）
 
 ```powershell
-irm https://raw.githubusercontent.com/chrisis58/idea-build-env/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/chrisis58/idea-build-env-resolver/refs/heads/main/install.ps1 | iex
 ```
 
 选择 `L` 安装到当前项目（默认，直接回车），或 `G` 安装到全局（所有项目生效）。

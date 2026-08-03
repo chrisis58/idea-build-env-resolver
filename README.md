@@ -27,7 +27,7 @@ When Claude Code detects an IDEA project, it:
 ### One-liner (recommended)
 
 ```powershell
-irm https://raw.githubusercontent.com/chrisis58/idea-build-env/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/chrisis58/idea-build-env-resolver/refs/heads/main/install.ps1 | iex
 ```
 
 Choose `L` for the current project (default, just press Enter) or `G` to install globally for all projects.
