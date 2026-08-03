@@ -55,6 +55,8 @@ The skill activates automatically before any Maven or Java build command. You ca
 ```
 /idea-build-env                              # auto-locate project
 /idea-build-env C:\path\to\idea-project      # explicit path
+
+/idea-build-env rebuild                      # manual rebuild cache
 ```
 
 The resolved paths are used like this:

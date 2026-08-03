@@ -53,6 +53,8 @@ your-project/
 ```
 /idea-build-env                              # 自动定位项目
 /idea-build-env C:\path\to\idea-project      # 显式指定路径
+
+/idea-build-env rebuild                      # 手动重建缓存
 ```
 
 解析结果的使用方式：
