@@ -1,5 +1,7 @@
 # idea-build-env
 
+English | [中文](README.zh.md)
+
 A [Claude Code](https://claude.ai/code) skill that resolves JDK and Maven paths from IntelliJ IDEA project configuration — so builds run with the same toolchain the IDE uses.
 
 ## Problem

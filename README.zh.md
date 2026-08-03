@@ -1,5 +1,7 @@
 # idea-build-env
 
+[English](README.md) | 中文
+
 一个 [Claude Code](https://claude.ai/code) 技能，从 IntelliJ IDEA 项目配置中解析 JDK 和 Maven 路径，确保构建使用与 IDE 相同的工具链。
 
 ## 解决的问题
