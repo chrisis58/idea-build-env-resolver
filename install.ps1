@@ -47,11 +47,28 @@ try {
     }
 
     # ---------- Install ----------
-    if (Test-Path $TargetDir) {
-        Remove-Item $TargetDir -Recurse -Force
+    $existed = Test-Path $TargetDir
+    if ($existed) {
+        $confirm = Read-Host "Already installed at $TargetDir. Overwrite? (Y/n)"
+        if ($confirm -ne 'Y' -and $confirm -ne 'y' -and $confirm -ne '') {
+            Write-Host "Cancelled."
+            return
+        }
+        Write-Host "Removing previous installation..."
+        Remove-Item $TargetDir -Recurse -Force -ErrorAction Stop
+        if (Test-Path $TargetDir) { throw "Failed to remove $TargetDir" }
     }
+
     New-Item -ItemType Directory -Force -Path (Split-Path $TargetDir -Parent) | Out-Null
-    Copy-Item -Path $SkillSource -Destination $TargetDir -Recurse
+    Copy-Item -Path $SkillSource -Destination $TargetDir -Recurse -ErrorAction Stop
+
+    if (-not (Test-Path (Join-Path $TargetDir 'SKILL.md'))) {
+        throw "Install failed: SKILL.md not found in $TargetDir"
+    }
+
+    if ($existed) {
+        Write-Host "Updated to latest version."
+    }
 
     # ---------- Cleanup ----------
     Remove-Item $TempZip, $TempDir -Recurse -Force -ErrorAction SilentlyContinue
