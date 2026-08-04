@@ -36,7 +36,7 @@ else:                                   # auto-triggered (e.g. pre-build resolut
 
 When `rebuild_mode` is set, skip the cache and go directly to Step 2.
 
-Read `memory/idea-build-env.md` (relative to the project root). Reuse it only if **all** of the following hold:
+Reuse the `idea-build-env` memory entry only if **all** of the following hold:
 
 1. Cached `PROJECT_ROOT` equals the `root` determined in Step 0.
 2. `Test-Path` succeeds for `JAVA_EXE` and `MAVEN_CMD`.
@@ -52,11 +52,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command "& '<skill dir>/scripts/r
 
 The script prints the output block (see **Output**) to stdout and nothing else, exiting non-zero on stderr if a required value fails. **Report exactly what the script printed; never guess or fill in a plausible-looking path.**
 
-### 3. Cache to project MEMORY
+### 3. Cache to MEMORY
 
-After successful resolution, write all fields from **Output** to `memory/idea-build-env.md`.
+After successful resolution, write all fields from **Output** to your memory directory.
 
-Add an index line to `memory/MEMORY.md`: `- [IDEA Build Env](idea-build-env.md) — JDK/Maven paths from IDEA config`
+> NEVER write it inside the project's working tree or VCS.
 
 ## Output
 
